@@ -1,58 +1,104 @@
 #include "Arduino.h"
 #include "ArmControl.hpp"
 #include "NotificationControl.hpp"
+#include "SensorMonitor.hpp"
 
-cPlatformControl::cPlatformControl()
+cArmControl * oPlatformContoller = NULL;
+cArmControl * oAerialContoller = NULL;
+
+void cDeviceController::InitPlatformController()
 {
-  SetMotorObject(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER));
-//  SetSenorObject(new cPositionSensor(SENSOR_TYPE_PLATFORM_HOME), new cPositionSensor(SENSOR_TYPE_PLATFORM_BACK));
+  oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER));
 }
 
-cAerialControl::cAerialControl()
+void cDeviceController::InitAerialController()
 {
-  SetMotorObject(new cStepperMotor(MOTOR_TYPE_AERIAL_STEPPER));
-//  SetSenorObject(new cPositionSensor(SENSOR_TYPE_AERIAL_HOME), new cPositionSensor(SENSOR_TYPE_AERIAL_BACK));
+  oAerialContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_AERIAL_STEPPER));
 }
 
-BOOL cArmControl::StartHomingOperation()
+bool cDeviceController::SetPlatformOperation(eDeviceState eNewState)
 {
-  BOOL bStatus = false;
+  return oPlatformContoller->SetDeviceState(eNewState);
+}
 
-  if ((eHomingStatus == HOMING_STATE_IDLE) || (eHomingStatus == HOMING_STATE_TIMEOUT))
+bool cDeviceController::SetAerialOperation(eDeviceState eNewState)
+{
+  return oAerialContoller->SetDeviceState(eNewState);
+}
+
+void cDeviceController::PerformPlatformOperation()
+{
+  switch (oPlatformContoller->GetDeviceState())
   {
-    eHomingStatus = HOMING_STATE_START;
-    bStatus = true;
+    case DEVICE_FUNCTION_HOMING:
+      {
+        oPlatformContoller->PerformHomingOperation();
+        break;
+      }
+    default:
+      {
+        break;
+      }
   }
+}
 
-  return bStatus;
+void cDeviceController::PerformAerialOperation()
+{
+  switch (oAerialContoller->GetDeviceState())
+  {
+    case DEVICE_FUNCTION_HOMING:
+      {
+        oAerialContoller->PerformHomingOperation();
+        break;
+      }
+    default:
+      {
+        break;
+      }
+  }
 }
 
 void cArmControl::PerformHomingOperation()
 {
   switch (eHomingStatus)
   {
-    case HOMING_STATE_START: {ProcessHomingStart(); break;}
-    case HOMING_STATE_WAITING_HOME: {ProcessHomingWait(); break;}
-    case HOMING_STATE_END: {ProcessHomingEnd(); break;}
-    case HOMING_STATE_TIMEOUT:{ProcessHomingTimeout(); break;}
-    case HOMING_STATE_IDLE: default:{ break;}
+    case HOMING_STATE_INIT: {
+        ProcessHomingInit();
+        break;
+      }
+    case HOMING_STATE_WAITING_HOME: {
+        ProcessHomingWait();
+        break;
+      }
+    case HOMING_STATE_END: {
+        ProcessHomingEnd();
+        break;
+      }
+    case HOMING_STATE_TIMEOUT: {
+        ProcessHomingTimeout();
+        break;
+      }
+  case HOMING_STATE_IDLE: default: {
+        break;
+      }
   }
 }
 
-void cArmControl::ProcessHomingStart()
+void cArmControl::ProcessHomingInit()
 {
   if (oHomeSensor->GetSensorStatus() == false)
   {
     u32HomingTimeoutCount = 0;
     bIsHomingDone = false;
     eHomingStatus = HOMING_STATE_WAITING_HOME;
-    cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_BUSY);
+    //    cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_BUSY);
   }
   else
   {
     eHomingStatus = HOMING_STATE_END;
   }
 }
+
 void cArmControl::ProcessHomingWait()
 {
   if (oHomeSensor->GetSensorStatus() == true)
@@ -72,12 +118,42 @@ void cArmControl::ProcessHomingEnd()
 {
   eHomingStatus = HOMING_STATE_IDLE;
   bIsHomingDone = true;
-  cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_IDLE);
+  eState = DEVICE_STATE_IDLE;
+  //  cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_IDLE);
 }
 
 void cArmControl::ProcessHomingTimeout()
 {
   bIsHomingDone = false;
-  cBuzzerControl::SetBuzzerPattern(BUZZER_PATTERN_4);
-  cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_IDLE);
+  eState = DEVICE_STATE_IDLE;
+  //  cBuzzerControl::SetBuzzerPattern(BUZZER_PATTERN_4);
+  //  cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_IDLE);
+}
+
+bool cArmControl::SetDeviceState(eDeviceState eNewState)
+{
+  bool bStatus = false;
+
+  if (eState == DEVICE_STATE_IDLE)
+  {
+    eState = eNewState;
+    InitializeNewState();
+    bStatus = true;
+  }
+}
+
+void cArmControl::InitializeNewState()
+{
+  switch (eState)
+  {
+    case DEVICE_FUNCTION_HOMING:
+      {
+        eHomingStatus = HOMING_STATE_INIT;
+        break;
+      }
+    default:
+      {
+        break;
+      }
+  }
 }

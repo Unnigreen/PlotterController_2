@@ -6,13 +6,26 @@
 
 typedef enum
 {
+  DEVICE_FUNCTION_INVALID = -1,
+  DEVICE_FUNCTION_HOMING,
+  DEVICE_FUNCTION_MAX
+} eDeviceFunctionalities;
+
+typedef enum
+{
   HOMING_STATE_IDLE = 0,
-  HOMING_STATE_START,
+  HOMING_STATE_INIT,
   HOMING_STATE_WAITING_HOME,
   HOMING_STATE_END,
   HOMING_STATE_TIMEOUT,
-  HOMING_STATE_MAX,
+  HOMING_STATE_MAX
 } eHomingState;
+
+typedef enum {
+  DEVICE_STATE_IDLE,
+  DEVICE_STATE_HOMING,
+  DEVICE_STATE_MAX
+} eDeviceState;
 
 class cArmControl
 {
@@ -21,37 +34,35 @@ class cArmControl
     BOOL bIsHomingDone;
     eHomingState eHomingStatus;
     U32 u32HomingTimeoutCount;
+    eDeviceState eState;
 
     cSwitchSensor * oHomeSensor;
     cSwitchSensor * oBackSensor;
 
-    void ProcessHomingStart();
+    void ProcessHomingInit();
     void ProcessHomingWait();
     void ProcessHomingEnd();
     void ProcessHomingTimeout();
 
+    cArmControl() {}
+
   public:
-    cArmControl() {
-      poMotorObj = 0;
+
+    cArmControl(cMotorAbs * oMtr) {
+      poMotorObj = oMtr;
       oHomeSensor = 0;
       oBackSensor = 0;
       bIsHomingDone = false;
       u32HomingTimeoutCount = 0;
       eHomingStatus = HOMING_STATE_IDLE;
     }
-    void SetSenorObject(cSwitchSensor * poHomeSnsr, cSwitchSensor * poBackSnsr){
-      oHomeSensor = poHomeSnsr;
-      oBackSensor = poBackSnsr;
-    }
-    void SetMotorObject(cMotorAbs * poMtrObj) {
-      poMotorObj = poMtrObj;
-    }
-    cMotorAbs * GetMototObject() {
-      return poMotorObj;
-    }
     BOOL StartHomingOperation();
     void PerformHomingOperation();
-    
+    eDeviceState GetDeviceState() {
+      return eState;
+    };
+    bool SetDeviceState(eDeviceState eNewState);
+    void InitializeNewState();
 };
 
 class cPlatformControl : public cArmControl
@@ -68,4 +79,20 @@ class cAerialControl : public cArmControl
 
   public:
     cAerialControl();
+};
+
+class cDeviceController
+{
+  private:
+
+  public:
+    static void InitPlatformController();
+    static void InitAerialController();
+
+    static void PerformPlatformOperation();
+    static void PerformAerialOperation();
+
+    static bool SetPlatformOperation(eDeviceState eNewState);
+    static bool SetAerialOperation(eDeviceState eNewState);
+
 };

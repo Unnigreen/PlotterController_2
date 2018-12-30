@@ -1,5 +1,8 @@
 #include "stdtype.hpp"
 
+#ifndef __SENSOR_MONITOR_HPP__
+#define __SENSOR_MONITOR_HPP__
+
 #define MAX_DEBOUNCE_COUNT                  2
 
 #define PLATFORM_HOME_SENSOR_PIN            5
@@ -59,3 +62,5 @@ class cSensorsMonitor
     }
     static void PollAndUpdateSensorStatus();
 };
+
+#endif

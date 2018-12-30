@@ -14,6 +14,8 @@ void setup() {
   SchedulerNs::Scheduler::CreateTask(1, 50, cSensorsMonitor::InitSensorMonitor, cSensorsMonitor::PollAndUpdateSensorStatus);
   //  SchedulerNs::Scheduler::CreateTask(1, 1, NULL, cLedControl::LedOperation);
   //  SchedulerNs::Scheduler::CreateTask(1, 1, NULL, cBuzzerControl::BuzzerOperation);
+  SchedulerNs::Scheduler::CreateTask(1, 1000, cDeviceController::InitPlatformController, cDeviceController::PerformPlatformOperation);
+//  SchedulerNs::Scheduler::CreateTask(1, 1000, cDeviceController::InitAerialController, cDeviceController::PerformAerialOperation);
 
   SchedulerNs::Scheduler::Start();
 }
