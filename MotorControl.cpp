@@ -131,11 +131,11 @@ void cStepperMotor::MotorStepProcessing()
 
 void cStepperMotor::Start()
 {
-  u32StepsRequired = 100;
+  u32StepsRequired = 1000;
 
   noInterrupts();
 
-  // initialize timer1
+  // initialize timer0
   TCCR0A = 0;
   TCCR0B = 0;
   TCNT0  = 0;
@@ -144,19 +144,21 @@ void cStepperMotor::Start()
   //  OCR0A = 312 * 4;
   OCR0B = 200;
   TCCR0B |= (1 << WGM12);   // CTC mode
-  TCCR0B |= (1 << CS12);    // 256 prescaler
+  //  TCCR0B |= (1 << CS12);    // 256 prescaler
+  TCCR0B |= (1 << CS01);    // 64 prescaler
+  TCCR0B |= (1 << CS00);    // 64 prescaler
   //  TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
   interrupts();
 
   Serial.write("Started ************ \n");
-//  TIMSK1 |= (1 << OCIE1B);  // enable timer compare interrupt
+  //  TIMSK1 |= (1 << OCIE1B);  // enable timer compare interrupt
   TIMSK0 |= (1 << OCIE0B);  // enable timer compare interrupt
 }
 
 void cStepperMotor::Stop()
 {
-//  TIMSK1 &= ~(U8)(1 << OCIE1B);  // enable timer compare interrupt
+  //  TIMSK1 &= ~(U8)(1 << OCIE1B);  // enable timer compare interrupt
   TIMSK0 &= ~(U8)(1 << OCIE0B);  // enable timer compare interrupt
 }
 
