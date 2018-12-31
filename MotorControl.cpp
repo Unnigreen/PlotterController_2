@@ -124,8 +124,8 @@ void cStepperMotor::MotorStepProcessing()
   if (u32StepsRequired == 0)
   {
     Serial.write("Stopped \n");
-//    oPlatformStepper.Stop();
-    u32StepsRequired = 2000;
+    oPlatformStepper.Stop();
+//    u32StepsRequired = 2000;
     //    analogWrite(i32MotorPwmPin, 0);
   }
 }
@@ -141,19 +141,10 @@ void cStepperMotor::Start()
   TCCR0B = 0;
   TCNT0  = 0;
 
-  //    OCR1A = 31250;            // compare match register 16MHz/256/2Hz
-  //  OCR0A = 312 * 4;
   OCR0A = 150;
-
   TCCR0A |= (1 << WGM01);   // CTC mode
-//  TCCR0B |= (1 << WGM00);   // CTC mode
-  
-//  TCCR0B |= (1 << WGM00);   // CTC mode
-//  TCCR0B |= (1 << WGM01);   // CTC mode
-  //  TCCR0B |= (1 << CS12);    // 256 prescaler
   TCCR0B |= (1 << CS01);    // 64 prescaler
   TCCR0B |= (1 << CS00);    // 64 prescaler
-  //  TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
   interrupts();
 
