@@ -4,6 +4,11 @@
 cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER);
 cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER);
 
+void PwmTest()
+{
+  oPlatformStepper.Start();
+}
+
 cStepperMotor::cStepperMotor(eMotorType eType) : cMotorAbs()
 {
   u32MaxStepCounts = 0U;
@@ -118,8 +123,46 @@ void cStepperMotor::MotorStepProcessing()
 
   if (u32StepsRequired == 0)
   {
-    analogWrite(i32MotorPwmPin, 0);
+    Serial.write("Stopped \n");
+    oPlatformStepper.Stop();
+    //    analogWrite(i32MotorPwmPin, 0);
   }
+}
+
+void cStepperMotor::Start()
+{
+  u32StepsRequired = 100;
+
+  noInterrupts();
+
+  // initialize timer1
+  TCCR0A = 0;
+  TCCR0B = 0;
+  TCNT0  = 0;
+
+  //    OCR1A = 31250;            // compare match register 16MHz/256/2Hz
+  //  OCR0A = 312 * 4;
+  OCR0B = 200;
+  TCCR0B |= (1 << WGM12);   // CTC mode
+  TCCR0B |= (1 << CS12);    // 256 prescaler
+  //  TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+
+  interrupts();
+
+  Serial.write("Started ************ \n");
+//  TIMSK1 |= (1 << OCIE1B);  // enable timer compare interrupt
+  TIMSK0 |= (1 << OCIE0B);  // enable timer compare interrupt
+}
+
+void cStepperMotor::Stop()
+{
+//  TIMSK1 &= ~(U8)(1 << OCIE1B);  // enable timer compare interrupt
+  TIMSK0 &= ~(U8)(1 << OCIE0B);  // enable timer compare interrupt
+}
+
+ISR(TIMER0_COMPB_vect)          // timer compare interrupt service routine
+{
+  oPlatformStepper.MotorStepProcessing();
 }
 
 //ISR(TIMER1_COMPA_vect)

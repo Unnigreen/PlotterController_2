@@ -8,7 +8,9 @@ cArmControl * oAerialContoller = NULL;
 
 void cDeviceController::InitPlatformController()
 {
+  Serial.write("Init\n");
   oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER));
+  Serial.write("Init done\n");
 }
 
 void cDeviceController::InitAerialController()
@@ -18,7 +20,9 @@ void cDeviceController::InitAerialController()
 
 bool cDeviceController::SetPlatformOperation(eDeviceState eNewState)
 {
+  Serial.write("Set Platform operation\n");
   return oPlatformContoller->SetDeviceState(eNewState);
+
 }
 
 bool cDeviceController::SetAerialOperation(eDeviceState eNewState)
@@ -28,10 +32,12 @@ bool cDeviceController::SetAerialOperation(eDeviceState eNewState)
 
 void cDeviceController::PerformPlatformOperation()
 {
+  Serial.write("Platform operation\n");
   switch (oPlatformContoller->GetDeviceState())
   {
-    case DEVICE_FUNCTION_HOMING:
+    case DEVICE_STATE_HOMING:
       {
+        Serial.write("Platform HOMING operation\n");
         oPlatformContoller->PerformHomingOperation();
         break;
       }
@@ -46,7 +52,7 @@ void cDeviceController::PerformAerialOperation()
 {
   switch (oAerialContoller->GetDeviceState())
   {
-    case DEVICE_FUNCTION_HOMING:
+    case DEVICE_STATE_HOMING:
       {
         oAerialContoller->PerformHomingOperation();
         break;
@@ -63,22 +69,27 @@ void cArmControl::PerformHomingOperation()
   switch (eHomingStatus)
   {
     case HOMING_STATE_INIT: {
+        Serial.write("Platform HOMING - INIT \n");
         ProcessHomingInit();
         break;
       }
     case HOMING_STATE_WAITING_HOME: {
+        Serial.write("Platform HOMING - WAITING \n");
         ProcessHomingWait();
         break;
       }
     case HOMING_STATE_END: {
+        Serial.write("Platform HOMING - END \n");
         ProcessHomingEnd();
         break;
       }
     case HOMING_STATE_TIMEOUT: {
+        Serial.write("Platform HOMING - TIME_OUT \n");
         ProcessHomingTimeout();
         break;
       }
   case HOMING_STATE_IDLE: default: {
+        Serial.write("Platform HOMING - IDLE \n");
         break;
       }
   }
@@ -146,7 +157,7 @@ void cArmControl::InitializeNewState()
 {
   switch (eState)
   {
-    case DEVICE_FUNCTION_HOMING:
+    case DEVICE_STATE_HOMING:
       {
         eHomingStatus = HOMING_STATE_INIT;
         break;

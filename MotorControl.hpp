@@ -1,3 +1,6 @@
+#ifndef __MOTOR_CONTROL_HPP__
+#define __MOTOR_CONTROL_HPP__
+
 #include "stdtype.hpp"
 
 #define PLATFORM_STEPPER_MOTOR_PWM_PIN  3
@@ -85,4 +88,9 @@ class cStepperMotor : public cMotorAbs
     BOOL MotorMoveSteps(U32 u32Pos);
     BOOL MotorStop();
     void MotorStepProcessing();
+    void Start();
+    void Stop();
+
 };
+
+#endif // end of __MOTOR_CONTROL_HPP__

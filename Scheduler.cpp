@@ -37,14 +37,14 @@ void Scheduler::schedulerTimerInit()
   noInterrupts();
 
   // initialize timer1
-  	TCCR1A = 0;
-  	TCCR1B = 0;
-  	TCNT1  = 0;
-  
-//  	OCR1A = 31250;            // compare match register 16MHz/256/2Hz
-  	OCR1A = 312*4;
-  	TCCR1B |= (1 << WGM12);   // CTC mode
-  	TCCR1B |= (1 << CS12);    // 256 prescaler
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1  = 0;
+
+  //  	OCR1A = 31250;            // compare match register 16MHz/256/2Hz
+  OCR1A = 312 * 4;
+  TCCR1B |= (1 << WGM12);   // CTC mode
+  TCCR1B |= (1 << CS12);    // 256 prescaler
   //	TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
   interrupts();
@@ -52,7 +52,7 @@ void Scheduler::schedulerTimerInit()
 
 void Scheduler::Start()
 {
-  	TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+  TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 }
 
 TID Scheduler::CreateTask(USHORT taskPrio, ULONG ticksToRun, taskInitFn_ptr taskInitFn, taskRunFn_ptr taskRunFn)

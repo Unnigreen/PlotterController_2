@@ -2,14 +2,15 @@
 #include "SensorMonitor.hpp"
 #include "MotorControl.hpp"
 
-#define MAX_HOMING_TIMOUT_COUNT 10000U
+//#define MAX_HOMING_TIMOUT_COUNT 10000U
+#define MAX_HOMING_TIMOUT_COUNT 10U
 
-typedef enum
-{
-  DEVICE_FUNCTION_INVALID = -1,
-  DEVICE_FUNCTION_HOMING,
-  DEVICE_FUNCTION_MAX
-} eDeviceFunctionalities;
+//typedef enum
+//{
+//  DEVICE_FUNCTION_INVALID = -1,
+//  DEVICE_FUNCTION_HOMING,
+//  DEVICE_FUNCTION_MAX
+//} eDeviceFunctionalities;
 
 typedef enum
 {
@@ -54,6 +55,7 @@ class cArmControl
       oBackSensor = 0;
       bIsHomingDone = false;
       u32HomingTimeoutCount = 0;
+      eState = DEVICE_STATE_IDLE;
       eHomingStatus = HOMING_STATE_IDLE;
     }
     BOOL StartHomingOperation();
