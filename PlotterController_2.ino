@@ -20,8 +20,9 @@ void setup() {
   //  SchedulerNs::Scheduler::CreateTask(1, 100, cDeviceController::InitPlatformController, cDeviceController::PerformPlatformOperation);
   //  SchedulerNs::Scheduler::CreateTask(1, 1000, cDeviceController::InitAerialController, cDeviceController::PerformAerialOperation);
 
+  cStepperMotor::InitilizeStepperMotor();
   //  cDeviceController::SetPlatformOperation(DEVICE_STATE_HOMING);
-  PwmTest();
+  //  PwmTest();
 
   SchedulerNs::Scheduler::Start();
 }

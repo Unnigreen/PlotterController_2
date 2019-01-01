@@ -31,39 +31,19 @@ typedef enum
 class cMotorAbs
 {
   private:
+
+  protected:
     eMotorType eMotor;
     eMotorDirection eDirection;
-    //    cMotorAbs * poMotorObj;
 
   public:
     cMotorAbs() {
       eDirection = MOTOR_DIRECTION_INVALID;
-      //      poMotorObj = 0;
-    }
-    //    void SetMotorObject(cMotorAbs * poMotor) {
-    //      poMotorObj = poMotor;
-    //    }
-    //    cMotorAbs * GetMotorObject() {
-    //      return poMotorObj;
-    //    }
-    void SetMotorType(eMotorType eType) {
-      ((eType > MOTOR_TYPE_INVALID) && (eType < MOTOR_TYPE_MAX)) ? eMotor = eType : eMotor = MOTOR_TYPE_INVALID;
-    }
-    eMotorType GetMotorType() {
-      return eMotor;
-    }
-    void SetMotorDirection(eMotorDirection eDir)
-    {
-      ((eDir > MOTOR_DIRECTION_INVALID) && (eDir < MOTOR_DIRECTION_MAX)) ? eDirection = eDir : eDirection = MOTOR_DIRECTION_INVALID;
+      eMotor = MOTOR_TYPE_INVALID;
     }
 
-    eMotorDirection GetMotorDirection() {
-      return eDirection;
-    }
-
-    virtual BOOL SetMotorSpeed(U32 u32MotorSpeed) = 0;
-    virtual BOOL MotorMoveSteps(U32 u32Pos) = 0;
-    virtual BOOL MotorStop() = 0;
+    virtual void MotorStart(U32 u32Param) = 0;
+    virtual void MotorStop() = 0;
 };
 
 class cStepperMotor : public cMotorAbs
@@ -77,20 +57,18 @@ class cStepperMotor : public cMotorAbs
     U32 u32CurStepCount;
     U32 u32FinalStepCount;
 
-    BOOL MotorStart();
-    void SetMotorPwm();
     cStepperMotor();
 
   public:
     cStepperMotor(eMotorType eType);
 
-    BOOL SetMotorSpeed(U32 u32MotorSpeed);
-    BOOL MotorMoveSteps(U32 u32Pos);
-    BOOL MotorStop();
-    void MotorStepProcessing();
-    void Start();
-    void Stop();
+    void MotorStart(U32 u32Param);
+    void MotorStop();
 
+    void MotorMoveSteps(U32 u32Pos);
+//    void MotorStop();
+    void MotorStepProcessing();
+    static void InitilizeStepperMotor();
 };
 
 #endif // end of __MOTOR_CONTROL_HPP__
