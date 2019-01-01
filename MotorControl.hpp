@@ -4,7 +4,9 @@
 #include "stdtype.hpp"
 
 #define PLATFORM_STEPPER_MOTOR_PWM_PIN  3
+#define PLATFORM_STEPPER_MOTOR_DIRECTION_PIN  4
 #define AERIAL_STEPPER_MOTOR_PWM_PIN  5
+#define AERIAL_STEPPER_MOTOR_DIRECTION_PIN  6
 #define PLATFORM_STEPPER_MOTOR_DEFAULT_STEP_SPEED  500
 #define AERIAL_STEPPER_MOTOR_DEFAULT_STEP_SPEED  500
 #define PLATFORM_STEPPER_MOTOR_MAX_STEP_SPEED  1000
@@ -28,7 +30,7 @@ typedef enum
   MOTOR_DIRECTION_MAX
 } eMotorDirection;
 
-class cMotorAbs
+class cMotor
 {
   private:
 
@@ -46,12 +48,13 @@ class cMotorAbs
     virtual void MotorStop() = 0;
 };
 
-class cStepperMotor : public cMotorAbs
+class cStepperMotor : public cMotor
 {
   private:
     U32 u32Speed;
     U32 u32MaxStepCounts;
     S32 i32MotorPwmPin;
+    S32 i32MotorDirPin;
 
     U32 u32StepsRequired;
     U32 u32CurStepCount;

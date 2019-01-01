@@ -20,6 +20,12 @@ void setup() {
   //  SchedulerNs::Scheduler::CreateTask(1, 100, cDeviceController::InitPlatformController, cDeviceController::PerformPlatformOperation);
   //  SchedulerNs::Scheduler::CreateTask(1, 1000, cDeviceController::InitAerialController, cDeviceController::PerformAerialOperation);
 
+//  while (1)
+//  {
+//    digitalWrite(13, !digitalRead(13));
+//    delay(1000);
+//  }
+
   cStepperMotor::InitilizeStepperMotor();
   //  cDeviceController::SetPlatformOperation(DEVICE_STATE_HOMING);
   //  PwmTest();

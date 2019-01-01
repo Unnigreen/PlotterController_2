@@ -31,7 +31,7 @@ typedef enum {
 class cArmControl
 {
   private:
-    cMotorAbs * poMotorObj;
+    cMotor * poMotorObj;
     BOOL bIsHomingDone;
     eHomingState eHomingStatus;
     U32 u32HomingTimeoutCount;
@@ -49,7 +49,7 @@ class cArmControl
 
   public:
 
-    cArmControl(cMotorAbs * oMtr) {
+    cArmControl(cMotor * oMtr) {
       poMotorObj = oMtr;
       oHomeSensor = 0;
       oBackSensor = 0;
