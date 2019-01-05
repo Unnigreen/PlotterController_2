@@ -39,7 +39,7 @@ class cMotor
     eMotorDirection eDirection;
 
   public:
-    cMotorAbs() {
+    cMotor(void) {
       eDirection = MOTOR_DIRECTION_INVALID;
       eMotor = MOTOR_TYPE_INVALID;
     }
@@ -51,11 +51,11 @@ class cMotor
 class cStepperMotor : public cMotor
 {
   private:
+    U8 u8MotorPwmPin;
+    U8 u8MotorDirPin;
+
     U32 u32Speed;
     U32 u32MaxStepCounts;
-    S32 i32MotorPwmPin;
-    S32 i32MotorDirPin;
-
     U32 u32StepsRequired;
     U32 u32CurStepCount;
     U32 u32FinalStepCount;
@@ -63,13 +63,13 @@ class cStepperMotor : public cMotor
     cStepperMotor();
 
   public:
-    cStepperMotor(eMotorType eType);
+    cStepperMotor(eMotorType eType, U8 u8Pwm_pin, U8 u8Dir_pin);
 
     void MotorStart(U32 u32Param);
     void MotorStop();
 
     void MotorMoveSteps(U32 u32Pos);
-//    void MotorStop();
+    //    void MotorStop();
     void MotorStepProcessing();
     static void InitilizeStepperMotor();
 };

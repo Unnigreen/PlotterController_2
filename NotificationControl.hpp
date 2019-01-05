@@ -30,10 +30,10 @@ class cBuzzerControl
     static void TurnOnBuzzer() {
       digitalWrite(BUZZER_PIN, HIGH);
     }
-    static void TurnOffBuzzer(){
+    static void TurnOffBuzzer() {
       digitalWrite(BUZZER_PIN, LOW);
     }
-    static void ToggleBuzzer(){
+    static void ToggleBuzzer() {
       digitalWrite(BUZZER_PIN, !digitalRead(BUZZER_PIN));
     }
     static void SetBuzzerPattern(eBuzzerPattern ePattern);

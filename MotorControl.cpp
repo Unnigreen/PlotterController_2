@@ -4,7 +4,7 @@
 cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN);
 cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER, AERIAL_STEPPER_MOTOR_PWM_PIN, AERIAL_STEPPER_MOTOR_DIRECTION_PIN);
 
-cStepperMotor::cStepperMotor(eMotorType eType, U32 u32Pwm_pin, U32 u32Dir_pin) : cMotor()
+cStepperMotor::cStepperMotor(eMotorType eType, U8 u8Pwm_pin, U8 u8Dir_pin) : cMotor()
 {
   u32MaxStepCounts = 0U;
   u32CurStepCount = 0U;
@@ -14,30 +14,11 @@ cStepperMotor::cStepperMotor(eMotorType eType, U32 u32Pwm_pin, U32 u32Dir_pin) :
 
   eMotor = MOTOR_TYPE_PLATFORM_STEPPER;
   u32Speed = PLATFORM_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
-  i32MotorPwmPin = u32Pwm_pin;
-  i32MotorDirPin = u32Dir_pin;
+  u8MotorPwmPin = u8Pwm_pin;
+  u8MotorDirPin = u8Dir_pin;
 
-  //  if (eType == MOTOR_TYPE_PLATFORM_STEPPER)
-  //  {
-  //    eMotor = MOTOR_TYPE_PLATFORM_STEPPER;
-  //    u32Speed = PLATFORM_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
-  //    i32MotorPwmPin = PLATFORM_STEPPER_MOTOR_PWM_PIN;
-  //    i32MotorDirPin = PLATFORM_STEPPER_MOTOR_DIRECTION_PIN;
-  //  }
-  //  else if (eType == MOTOR_TYPE_AERIAL_STEPPER)
-  //  {
-  //    eMotor = MOTOR_TYPE_AERIAL_STEPPER;
-  //    u32Speed = AERIAL_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
-  //    i32MotorPwmPin = AERIAL_STEPPER_MOTOR_PWM_PIN;
-  //    i32MotorDirPin = AERIAL_STEPPER_MOTOR_DIRECTION_PIN;
-  //  }
-  //  else
-  //  {
-  //    eMotor = MOTOR_TYPE_INVALID;
-  //    u32Speed = 0U;
-  //    i32MotorPwmPin = 0;
-  //    i32MotorDirPin = 0;
-  //  }
+  pinMode(u8MotorPwmPin, OUTPUT);
+  pinMode(u8MotorDirPin, OUTPUT);
 }
 
 void cStepperMotor::MotorStart(U32 u32Pos)
@@ -52,13 +33,13 @@ void cStepperMotor::MotorStart(U32 u32Pos)
     {
       eDir = MOTOR_DIRECTION_FORWARD;
       u32StepsCount = u32FinalStepCount - u32CurStepCount;
-      digitalWrite(i32MotorDirPin, true);
+      digitalWrite(u8MotorDirPin, true);
     }
     else if (u32FinalStepCount < u32CurStepCount)
     {
       eDir = MOTOR_DIRECTION_REVERSE;
       u32StepsCount = u32CurStepCount - u32FinalStepCount;
-      digitalWrite(i32MotorDirPin, false);
+      digitalWrite(u8MotorDirPin, false);
     }
     else
     {
@@ -86,15 +67,15 @@ void cStepperMotor::MotorStepProcessing()
     if (u32StepsRequired > 0)
     {
       u32StepsRequired--;
-      //      digitalWrite(i32MotorPwmPin, !digitalRead(i32MotorPwmPin));
-      digitalWrite(13, !digitalRead(13));
+      digitalWrite(u8MotorPwmPin, !digitalRead(u8MotorPwmPin));
+      //      digitalWrite(13, !digitalRead(13));
     }
 
     if (u32StepsRequired == 0)
     {
       Serial.write("Stopped \n");
-      //      digitalWrite(i32MotorPwmPin, false);
-      digitalWrite(13, false);
+      digitalWrite(u8MotorPwmPin, false);
+      //      digitalWrite(13, false);
       eDirection = MOTOR_DIRECTION_INVALID;
       //      MotorStart(0);
     }

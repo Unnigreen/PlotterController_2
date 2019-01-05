@@ -36,7 +36,7 @@ class cSwitchSensor
 
   public:
     //    cPositionSensor(eSensorType eType);
-    cPositionSensor() {
+    cSwitchSensor() {
       bSensorStatus = false;
       bSensorCurStatus = false;
       u8MaxDebounceCount = 0;
@@ -64,3 +64,4 @@ class cSensorsMonitor
 };
 
 #endif
+

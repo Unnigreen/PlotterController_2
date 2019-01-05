@@ -9,13 +9,13 @@ cArmControl * oAerialContoller = NULL;
 void cDeviceController::InitPlatformController()
 {
   Serial.write("Init\n");
-  oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER));
+  //  oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER));
   Serial.write("Init done\n");
 }
 
 void cDeviceController::InitAerialController()
 {
-  oAerialContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_AERIAL_STEPPER));
+  //  oAerialContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_AERIAL_STEPPER));
 }
 
 bool cDeviceController::SetPlatformOperation(eDeviceState eNewState)

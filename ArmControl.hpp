@@ -98,3 +98,4 @@ class cDeviceController
     static bool SetAerialOperation(eDeviceState eNewState);
 
 };
+

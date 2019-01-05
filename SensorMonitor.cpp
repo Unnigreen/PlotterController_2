@@ -73,3 +73,4 @@ void cSensorsMonitor::PollAndUpdateSensorStatus()
     oSensors[eType].PerformSensorDebounce();
   }
 }
+

@@ -51,7 +51,7 @@ typedef enum
   TASK_CREATE_RESPONSE_SUCCESS,
   TASK_CREATE_RESPONSE_FAILURE,
   TASK_CREATE_RESPONSE_MAX
-}eTaskCreateResponse;
+} eTaskCreateResponse;
 
 class Scheduler
 {
