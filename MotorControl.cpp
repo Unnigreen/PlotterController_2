@@ -1,10 +1,10 @@
 #include "Arduino.h"
 #include "MotorControl.hpp"
 
-cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER);
-cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER);
+cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN);
+cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER, AERIAL_STEPPER_MOTOR_PWM_PIN, AERIAL_STEPPER_MOTOR_DIRECTION_PIN);
 
-cStepperMotor::cStepperMotor(eMotorType eType) : cMotor()
+cStepperMotor::cStepperMotor(eMotorType eType, U32 u32Pwm_pin, U32 u32Dir_pin) : cMotor()
 {
   u32MaxStepCounts = 0U;
   u32CurStepCount = 0U;
@@ -12,27 +12,32 @@ cStepperMotor::cStepperMotor(eMotorType eType) : cMotor()
   u32StepsRequired = 0;
   eDirection = MOTOR_DIRECTION_INVALID;
 
-  if (eType == MOTOR_TYPE_PLATFORM_STEPPER)
-  {
-    eMotor = MOTOR_TYPE_PLATFORM_STEPPER;
-    u32Speed = PLATFORM_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
-    i32MotorPwmPin = PLATFORM_STEPPER_MOTOR_PWM_PIN;
-    i32MotorDirPin = PLATFORM_STEPPER_MOTOR_DIRECTION_PIN;
-  }
-  else if (eType == MOTOR_TYPE_AERIAL_STEPPER)
-  {
-    eMotor = MOTOR_TYPE_AERIAL_STEPPER;
-    u32Speed = AERIAL_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
-    i32MotorPwmPin = AERIAL_STEPPER_MOTOR_PWM_PIN;
-    i32MotorDirPin = AERIAL_STEPPER_MOTOR_DIRECTION_PIN;
-  }
-  else
-  {
-    eMotor = MOTOR_TYPE_INVALID;
-    u32Speed = 0U;
-    i32MotorPwmPin = 0;
-    i32MotorDirPin = 0;
-  }
+  eMotor = MOTOR_TYPE_PLATFORM_STEPPER;
+  u32Speed = PLATFORM_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
+  i32MotorPwmPin = u32Pwm_pin;
+  i32MotorDirPin = u32Dir_pin;
+
+  //  if (eType == MOTOR_TYPE_PLATFORM_STEPPER)
+  //  {
+  //    eMotor = MOTOR_TYPE_PLATFORM_STEPPER;
+  //    u32Speed = PLATFORM_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
+  //    i32MotorPwmPin = PLATFORM_STEPPER_MOTOR_PWM_PIN;
+  //    i32MotorDirPin = PLATFORM_STEPPER_MOTOR_DIRECTION_PIN;
+  //  }
+  //  else if (eType == MOTOR_TYPE_AERIAL_STEPPER)
+  //  {
+  //    eMotor = MOTOR_TYPE_AERIAL_STEPPER;
+  //    u32Speed = AERIAL_STEPPER_MOTOR_DEFAULT_STEP_SPEED;
+  //    i32MotorPwmPin = AERIAL_STEPPER_MOTOR_PWM_PIN;
+  //    i32MotorDirPin = AERIAL_STEPPER_MOTOR_DIRECTION_PIN;
+  //  }
+  //  else
+  //  {
+  //    eMotor = MOTOR_TYPE_INVALID;
+  //    u32Speed = 0U;
+  //    i32MotorPwmPin = 0;
+  //    i32MotorDirPin = 0;
+  //  }
 }
 
 void cStepperMotor::MotorStart(U32 u32Pos)
@@ -91,7 +96,7 @@ void cStepperMotor::MotorStepProcessing()
       //      digitalWrite(i32MotorPwmPin, false);
       digitalWrite(13, false);
       eDirection = MOTOR_DIRECTION_INVALID;
-//      MotorStart(0);
+      //      MotorStart(0);
     }
     if (eDirection == MOTOR_DIRECTION_FORWARD)
     {
@@ -119,7 +124,7 @@ void cStepperMotor::InitilizeStepperMotor()
   TIMSK0 |= (1 << OCIE0A);  // enable timer compare interrupt
   Serial.write("Started ******** \n");
 
-  oPlatformStepper.MotorStart(100);
+  oPlatformStepper.MotorStart(1000);
 }
 
 ISR(TIMER0_COMPA_vect)          // timer compare interrupt service routine
