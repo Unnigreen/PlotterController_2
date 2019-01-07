@@ -1,8 +1,8 @@
 #include "Arduino.h"
 #include "MotorControl.hpp"
 
-cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN);
-cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER, AERIAL_STEPPER_MOTOR_PWM_PIN, AERIAL_STEPPER_MOTOR_DIRECTION_PIN);
+//cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN);
+//cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER, AERIAL_STEPPER_MOTOR_PWM_PIN, AERIAL_STEPPER_MOTOR_DIRECTION_PIN);
 
 cStepperMotor::cStepperMotor(eMotorType eType, U8 u8Pwm_pin, U8 u8Dir_pin) : cMotor()
 {
@@ -43,7 +43,7 @@ void cStepperMotor::MotorStart(U32 u32Pos)
     }
     else
     {
-      eDirection = MOTOR_DIRECTION_INVALID;
+      eDir = MOTOR_DIRECTION_INVALID;
     }
 
     noInterrupts();
@@ -68,16 +68,12 @@ void cStepperMotor::MotorStepProcessing()
     {
       u32StepsRequired--;
       digitalWrite(u8MotorPwmPin, !digitalRead(u8MotorPwmPin));
-      //      digitalWrite(13, !digitalRead(13));
     }
-
-    if (u32StepsRequired == 0)
+    else
     {
       Serial.write("Stopped \n");
       digitalWrite(u8MotorPwmPin, false);
-      //      digitalWrite(13, false);
       eDirection = MOTOR_DIRECTION_INVALID;
-      //      MotorStart(0);
     }
     if (eDirection == MOTOR_DIRECTION_FORWARD)
     {
@@ -103,13 +99,13 @@ void cStepperMotor::InitilizeStepperMotor()
   TCCR0B |= (1 << CS00);    // 64 prescaler
 
   TIMSK0 |= (1 << OCIE0A);  // enable timer compare interrupt
-  Serial.write("Started ******** \n");
+//  Serial.write("Started ******** \n");
 
-  oPlatformStepper.MotorStart(1000);
+  //  oPlatformStepper.MotorStart(1000);
 }
-
-ISR(TIMER0_COMPA_vect)          // timer compare interrupt service routine
-{
-  oPlatformStepper.MotorStepProcessing();
-  oAerialStepper.MotorStepProcessing();
-}
+//
+//ISR(TIMER0_COMPA_vect)          // timer compare interrupt service routine
+//{
+////  oPlatformStepper.MotorStepProcessing();
+////  oAerialStepper.MotorStepProcessing();
+//}

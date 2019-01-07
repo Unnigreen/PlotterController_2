@@ -58,13 +58,21 @@ class cArmControl
       eState = DEVICE_STATE_IDLE;
       eHomingStatus = HOMING_STATE_IDLE;
     }
-    BOOL StartHomingOperation();
+    //    BOOL StartHomingOperation();
     void PerformHomingOperation();
     eDeviceState GetDeviceState() {
       return eState;
     };
     bool SetDeviceState(eDeviceState eNewState);
     void InitializeNewState();
+    void MoveSteps(U32 u32Steps)
+    {
+      poMotorObj->MotorStart(u32Steps);
+    }
+    void MtrStepProcessing()
+    {
+      poMotorObj->MotorStepProcessing();
+    }
 };
 
 class cPlatformControl : public cArmControl
@@ -98,4 +106,3 @@ class cDeviceController
     static bool SetAerialOperation(eDeviceState eNewState);
 
 };
-

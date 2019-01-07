@@ -46,6 +46,9 @@ class cMotor
 
     virtual void MotorStart(U32 u32Param) = 0;
     virtual void MotorStop() = 0;
+    virtual void MotorStepProcessing() {
+      return;
+    };
 };
 
 class cStepperMotor : public cMotor
@@ -67,9 +70,7 @@ class cStepperMotor : public cMotor
 
     void MotorStart(U32 u32Param);
     void MotorStop();
-
     void MotorMoveSteps(U32 u32Pos);
-    //    void MotorStop();
     void MotorStepProcessing();
     static void InitilizeStepperMotor();
 };

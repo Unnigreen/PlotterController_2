@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "ArmControl.hpp"
+#include "MotorControl.hpp"
 #include "NotificationControl.hpp"
 #include "SensorMonitor.hpp"
 
@@ -9,7 +10,8 @@ cArmControl * oAerialContoller = NULL;
 void cDeviceController::InitPlatformController()
 {
   Serial.write("Init\n");
-  //  oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER));
+  oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN));
+//  oPlatformContoller->MoveSteps(1000);
   Serial.write("Init done\n");
 }
 
@@ -32,6 +34,9 @@ bool cDeviceController::SetAerialOperation(eDeviceState eNewState)
 
 void cDeviceController::PerformPlatformOperation()
 {
+  static U32 u32Sign = 0;
+  U32 u32Steps = 0;
+  
   Serial.write("Platform operation\n");
   switch (oPlatformContoller->GetDeviceState())
   {
@@ -43,6 +48,8 @@ void cDeviceController::PerformPlatformOperation()
       }
     default:
       {
+        u32Sign++ % 2 == 0 ? u32Steps = 100 : u32Steps = 10;
+        oPlatformContoller->MoveSteps(u32Steps);
         break;
       }
   }
@@ -167,4 +174,15 @@ void cArmControl::InitializeNewState()
         break;
       }
   }
+}
+
+ISR(TIMER0_COMPA_vect)          // timer compare interrupt service routine
+{
+  if (oPlatformContoller != 0)
+  {
+//    Serial.write("2");
+    oPlatformContoller->MtrStepProcessing();
+  }
+  //  oPlatformStepper.MotorStepProcessing();
+  //  oAerialStepper.MotorStepProcessing();
 }
