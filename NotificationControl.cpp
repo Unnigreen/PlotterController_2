@@ -7,6 +7,7 @@ U32 cBuzzerControl::u32RunCount = 0U;
 eLedPattern cLedControl::ePattern = LED_PATTERN_SYSYTEM_BUSY;
 U32 cLedControl::u32RunCount;
 cLed cLedControl::oLedN1(LED_BUILTIN);
+bool cLedControl::bIsControlBusy[CONTROL_TYPE_MAX];
 
 void cBuzzerControl::SetBuzzerPattern(eBuzzerPattern ePattern)
 {
@@ -36,9 +37,11 @@ void cBuzzerControl::BuzzerOperation()
 
 void cLedControl::LedOperation()
 {
+  IsSystemBusy() == true ? (ePattern = LED_PATTERN_SYSYTEM_BUSY) : (ePattern = LED_PATTERN_SYSYTEM_IDLE);
+  
   switch (ePattern)  {
     case LED_PATTERN_SYSYTEM_IDLE: {
-        oLedN1.TurnOnLed();
+        oLedN1.TurnOffLed();
         break;
       }
     case LED_PATTERN_SYSYTEM_BUSY: {
@@ -54,3 +57,17 @@ void cLedControl::LedOperation()
   }
 }
 
+bool cLedControl::IsSystemBusy()
+{
+  bool bRetVal = false;
+  
+  for (U32 i = ((U32)CONTROL_TYPE_INVALID + 1); i < (U32)CONTROL_TYPE_MAX; i++)
+  {
+    if (bIsControlBusy[i] != false)
+    {
+      bRetVal = true;
+      break;
+    }
+  }
+  return bRetVal;
+}

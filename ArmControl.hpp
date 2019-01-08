@@ -57,6 +57,7 @@ class cArmControl
       u32HomingTimeoutCount = 0;
       eState = DEVICE_STATE_IDLE;
       eHomingStatus = HOMING_STATE_IDLE;
+      eHomingStatus = HOMING_STATE_INIT;
     }
     //    BOOL StartHomingOperation();
     void PerformHomingOperation();

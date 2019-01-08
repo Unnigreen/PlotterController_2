@@ -61,6 +61,13 @@ class cLed
     }
 };
 
+typedef enum eControlType
+{
+  CONTROL_TYPE_INVALID = -1,
+  CONTROL_TYPE_PLATFORM,
+  CONTROL_TYPE_AERIAL,
+  CONTROL_TYPE_MAX,
+} etControlType;
 
 class cLedControl
 {
@@ -68,11 +75,16 @@ class cLedControl
     static eLedPattern ePattern;
     static U32 u32RunCount;
     static cLed oLedN1;
+    static bool bIsControlBusy[CONTROL_TYPE_MAX];
 
+    static bool IsSystemBusy();
+    
   public:
-    static void SetLedPattern(eLedPattern ePtn) {
-      ePattern = ePtn;
-      u32RunCount = LED_TOGGLE_COUNT;
+    static void SetSystemBusyStatus(etControlType eType, bool bIsBusy) {
+      if ( (eType > CONTROL_TYPE_INVALID ) && (eType < CONTROL_TYPE_MAX) )
+      {
+        bIsControlBusy[eType] = bIsBusy;
+      }
     }
     static void LedOperation();
 };

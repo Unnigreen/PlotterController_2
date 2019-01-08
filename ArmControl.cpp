@@ -11,7 +11,8 @@ void cDeviceController::InitPlatformController()
 {
   Serial.write("Init\n");
   oPlatformContoller = new cArmControl(new cStepperMotor(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN));
-//  oPlatformContoller->MoveSteps(1000);
+  //  oPlatformContoller->MoveSteps(1000);
+  
   Serial.write("Init done\n");
 }
 
@@ -36,22 +37,24 @@ void cDeviceController::PerformPlatformOperation()
 {
   static U32 u32Sign = 0;
   U32 u32Steps = 0;
-  
+
   Serial.write("Platform operation\n");
   switch (oPlatformContoller->GetDeviceState())
   {
     case DEVICE_STATE_HOMING:
+    default:
       {
         Serial.write("Platform HOMING operation\n");
         oPlatformContoller->PerformHomingOperation();
         break;
       }
-    default:
-      {
-        u32Sign++ % 2 == 0 ? u32Steps = 100 : u32Steps = 10;
-        oPlatformContoller->MoveSteps(u32Steps);
-        break;
-      }
+      //    default:
+      //      {
+      //        u32Sign++ % 2 == 0 ? u32Steps = 1000 : u32Steps = 10;
+      //        oPlatformContoller->MoveSteps(u32Steps);
+      //        cLedControl::SetSystemBusyStatus(CONTROL_TYPE_PLATFORM, true);
+      //        break;
+      //      }
   }
 }
 
@@ -104,11 +107,14 @@ void cArmControl::PerformHomingOperation()
 
 void cArmControl::ProcessHomingInit()
 {
-  if (oHomeSensor->GetSensorStatus() == false)
+  //  if (oHomeSensor->GetSensorStatus() == false)
+  if (oHomeSensor->GetSensorStatus() == true)
   {
     u32HomingTimeoutCount = 0;
     bIsHomingDone = false;
     eHomingStatus = HOMING_STATE_WAITING_HOME;
+    oPlatformContoller->MoveSteps(100000);
+    cLedControl::SetSystemBusyStatus(CONTROL_TYPE_PLATFORM, true);
     //    cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_BUSY);
   }
   else
@@ -119,14 +125,16 @@ void cArmControl::ProcessHomingInit()
 
 void cArmControl::ProcessHomingWait()
 {
-  if (oHomeSensor->GetSensorStatus() == true)
+  //  if (oHomeSensor->GetSensorStatus() == true)
+  if (oHomeSensor->GetSensorStatus() == false)
   {
     eHomingStatus = HOMING_STATE_END;
   }
   else
   {
     u32HomingTimeoutCount++;
-    if (u32HomingTimeoutCount >= MAX_HOMING_TIMOUT_COUNT)
+    //    if (u32HomingTimeoutCount >= MAX_HOMING_TIMOUT_COUNT)
+    if (u32HomingTimeoutCount >= 4)
     {
       eHomingStatus = HOMING_STATE_TIMEOUT;
     }
@@ -137,6 +145,8 @@ void cArmControl::ProcessHomingEnd()
   eHomingStatus = HOMING_STATE_IDLE;
   bIsHomingDone = true;
   eState = DEVICE_STATE_IDLE;
+  poMotorObj->MotorStop();
+  cLedControl::SetSystemBusyStatus(CONTROL_TYPE_PLATFORM, false);
   //  cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_IDLE);
 }
 
@@ -144,6 +154,7 @@ void cArmControl::ProcessHomingTimeout()
 {
   bIsHomingDone = false;
   eState = DEVICE_STATE_IDLE;
+  cLedControl::SetSystemBusyStatus(CONTROL_TYPE_PLATFORM, false);
   //  cBuzzerControl::SetBuzzerPattern(BUZZER_PATTERN_4);
   //  cLedControl::SetLedPattern(LED_PATTERN_SYSYTEM_IDLE);
 }
@@ -180,7 +191,7 @@ ISR(TIMER0_COMPA_vect)          // timer compare interrupt service routine
 {
   if (oPlatformContoller != 0)
   {
-//    Serial.write("2");
+    //    Serial.write("2");
     oPlatformContoller->MtrStepProcessing();
   }
   //  oPlatformStepper.MotorStepProcessing();

@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "MotorControl.hpp"
+#include "NotificationControl.hpp"
 
 //cStepperMotor oPlatformStepper(MOTOR_TYPE_PLATFORM_STEPPER, PLATFORM_STEPPER_MOTOR_PWM_PIN, PLATFORM_STEPPER_MOTOR_DIRECTION_PIN);
 //cStepperMotor oAerialStepper(MOTOR_TYPE_AERIAL_STEPPER, AERIAL_STEPPER_MOTOR_PWM_PIN, AERIAL_STEPPER_MOTOR_DIRECTION_PIN);
@@ -72,6 +73,7 @@ void cStepperMotor::MotorStepProcessing()
     else
     {
       Serial.write("Stopped \n");
+//      cLedControl::SetSystemBusyStatus(CONTROL_TYPE_PLATFORM, false);
       digitalWrite(u8MotorPwmPin, false);
       eDirection = MOTOR_DIRECTION_INVALID;
     }

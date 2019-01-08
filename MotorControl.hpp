@@ -72,6 +72,15 @@ class cStepperMotor : public cMotor
     void MotorStop();
     void MotorMoveSteps(U32 u32Pos);
     void MotorStepProcessing();
+    bool IsMotorOPerationCompleted()
+    {
+      bool bRetVal = false;
+      if ( eDirection == MOTOR_DIRECTION_INVALID )
+      {
+        bRetVal = true;
+      }
+      return bRetVal;
+    }
     static void InitilizeStepperMotor();
 };
 
